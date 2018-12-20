@@ -1,0 +1,22 @@
+<!--
+# @Time     : 2018-10-17 15:53
+# @Author   : liujiuhao
+# @Site     : 
+# @File     : equitinfoupload.html
+# @Software : PyCharm
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+        <input type="file" name="excel_file">
+        <input type="submit" value="批量导入">
+    </form>
+    <a href="{% url 'equit:index' %}">返回</a>
+</body>
+</html>

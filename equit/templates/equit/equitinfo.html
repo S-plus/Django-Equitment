@@ -1,0 +1,153 @@
+<!--
+# @Time     : 2018-08-30 11:49
+# @Author   : liujiuhao
+# @Site     : 
+# @File     : equitinfo.html
+# @Software : PyCharm
+-->
+
+<title>详情 - Equip Info</title>
+{% extends "equit/base.html" %}
+{% block context %}
+    <div style="margin-top: 60px">
+        <h2>详细信息</h2>
+        <hr/>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+        {% if info %}
+            <div>
+                <ul style="font-size: 16px;line-height: 50px;">
+                    <li><strong>IP地址：</strong>{{ info.ip_addr }}</li>
+                    <li><strong>操作系统：</strong>{{ info.oper_sys }}</li>
+                    <li><strong>系统程序：</strong>{{ info.sys_prog }}</li>
+                    <li><strong>上级IP地址：</strong>{{ info.sw_ip_addr }}</li>
+                    <li><strong>上级IP端口号：</strong>{{ info.sw_port }}</li>
+                    <li><strong>启用时间：</strong>{{ info.act_date }}</li>
+                    <li><strong>停用时间：</strong>{{ info.deact_date }}</li>
+                    <li><strong>设备名称：</strong>{{ info.equit_name }}</li>
+                    <li><strong>机架号：</strong>{{ info.cab_id }}</li>
+                    <li><strong>维护人员：</strong>{{ info.staff_name }}</li>
+                    <li><strong>联系方式：</strong>{{ info.staff_phone }}</li>
+                    {% if info.status %}
+                        <li><strong>设备状态：</strong><span style="color: green">在用</span></li>
+                    {% else %}
+                        <li><strong>设备状态：</strong><span style="color: red">停用</span></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <hr/>
+        {% else %}
+            <p>No equit are available.</p>
+        {% endif %}
+        <div>
+            {% if user.equitstaff.equit_permission == 9 or info.staff_id == user.equitstaff.id %}
+                {#            <a class="btn btn-primary"  data-toggle="modal" data-target="#myModalEdit" style="margin-left: 20px;" name="btnupdate">修改</a>#}
+                <button type="button" id="update" class="btn btn-primary" data-toggle="modal" data-target="#myModalEdit" style="margin-left: 20px;">修改</button>
+            {% endif %}
+            {% if user.equitstaff.equit_permission == 9 or info.staff_id == user.equitstaff.id %}
+                {% if info.status %}
+                    <a class="btn btn-danger" id="disable" data-toggle="modal" data-target="#myModalDisable" style="margin-left: 20px;">停用</a>
+                {% endif %}
+            {% endif %}
+            {% if user.equitstaff.equit_permission == 9 %}
+                <a class="btn btn-danger"  data-toggle="modal" data-target="#myModalDelete" style="margin-left: 20px;">删除</a>
+            {% endif %}
+            <a class="btn btn-info" href="{% url 'equit:index'%}" style="margin-left: 20px;">返回</a>
+        </div>
+
+        <div class="modal fade" id="myModalEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="updateclose"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel1">修改数据</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formstyle" method="post" action="{% url 'equit:equitinfo' info.id%}">{% csrf_token %}
+                            <div class="form-group">
+                                <p style="color: red" id ="updateError"></p>
+                            </div>
+                            {{form.as_p}}
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary" name="update">保存</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id="btn_update_rtn">返回</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="myModalDisable" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" id="disableclose" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel2">停用设备</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'equit:equitinfo' info.id%}">{% csrf_token %}
+                            <div class="form-group">
+                                <p>确认停用“{{ info.sys_prog }}”？</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary" name="disable">确定</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="myModalDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" id="deleteclose" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel2">删除设备</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'equit:equitinfo' info.id%}">{% csrf_token %}
+                            <div class="form-group">
+                                <p>确认删除“{{ info.sys_prog }}”？</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary" name="delete">确定</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $('#myModal').on('shown.bs.modal', function () {
+            $('#myInput').focus()
+        });
+
+        $().ready(
+            function ReturnError(){
+                $('#formstyle p').addClass('form-group');
+                $('#formstyle input').addClass('form-control');
+                {% if updateError %}
+                    $("button#update").click();
+                    $("p#updateError").text({{ updateError|safe }});
+                {% elif deleteError %}
+                    $("button#delete").click();
+                    $("p#deleteError").text({{ deleteError|safe }});
+                {% endif %}
+            }
+        );
+
+        $("button#updateclose ,button#btn_update_rtn").click(function () {
+            $("p#updateError").text("");
+        });
+        $("button#deleteclose ,button#btn_delete_rtn").click(function () {
+            $("p#deleteError").text("");
+        });
+    </script>
+
+{% endblock context%}

@@ -1,0 +1,21 @@
+<!--
+# @Time     : 2018-09-05 16:46
+# @Author   : liujiuhao
+# @Site     : 
+# @File     : equitinfoupdate.html
+# @Software : PyCharm
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="确认修改" />
+        <a href="{% url 'equit:equitinfo' info.id %}">返回</a>
+    </form>
+</body>
+</html>

@@ -1,0 +1,51 @@
+
+
+<title>修改信息 - Equip Info</title>
+{% extends "equit/base.html" %}
+{% block context %}
+<div style="margin-top: 60px">
+    <h2>修改信息</h2>
+    <hr/>
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            <ul style="font-size: 16px;width: 1000px">
+                <li style="line-height: 50px;"><strong>用户名：</strong>{{ equitstaff.staff_name }}</li>
+                <li style="line-height: 50px;"><strong>权限等级：</strong>{{ equitstaff.equit_permission }}</li>
+                <li id="phone" style="margin-top: 10px;">{{ form.as_p }}</li>
+            </ul>
+
+    </div>
+    <div style="margin-top: 20px;">
+        <input type="submit" class="form-control btn btn-primary" id="confupdate" style="width: 55px;margin-left: 20px;" value="保存">
+        <!--<button type="submit" id="confupdate" class="" style="margin-left: 40px;">保存</button>-->
+        <a class="btn btn-default" href="{% url 'equit:index' %}" style="margin-left: 20px;">返回</a>
+    </div>
+    </form>
+</div>
+{% endblock context%}
+
+
+<!--&lt;!&ndash;-->
+<!--# @Time     : 2018-08-30 10:27-->
+<!--# @Author   : liujiuhao-->
+<!--# @Site     : -->
+<!--# @File     : equitstaff_update_form.html-->
+<!--# @Software : PyCharm-->
+<!--&ndash;&gt;-->
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+
+<!--<body>-->
+<!--<form method="post">{% csrf_token %}-->
+<!--<ul>-->
+<!--<li>用户名：{{ equitstaff.staff_name }}</li>-->
+<!--<li>权限等级：{{ equitstaff.equit_permission }}</li>-->
+<!--<li id="phone">{{ form.as_p }}</li>-->
+<!--</ul>-->
+<!--<input id="confupdate" type="submit" value="修改">-->
+<!--<a href="{% url 'equit:index' equitstaff.id %}" >返回</a>-->
+<!--</form>-->
+<!--</body>-->
+
+<!--</html>-->

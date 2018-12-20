@@ -1,0 +1,206 @@
+<!--
+# @Time     : 2018-07-28 17:05
+# @Author   : liujiuhao
+# @Site     : 
+# @File     : index.html
+# @Software : PyCharm
+-->
+
+<title>首页 - Equip Info</title>
+{% extends "equit/base.html" %}
+{% block context %}
+    <div style="margin-top: 60px">
+        <div>
+            {% if equitinfo %}
+                <!--<ul class="nav nav-list">-->
+                <!--<li class="nav-header">-->
+                <!--<h3>IP列表</h3>-->
+                <!--</li>-->
+                <!--<hr/>-->
+                <!--{% for info in equitstaff.info_set.all %}-->
+                    <!--&lt;!&ndash;url指代url() 在应用的的urls模块中寻找指定名字的条目，如果想要修改页面路径可以直接在urls.py中修改 见urls.py&ndash;&gt;-->
+                    <!--<li class="active"><a href="{% url 'equit:equitinfo' info.id %}">{{ info.ip_addr }}</a></li>-->
+                    <!--{% endfor %}-->
+                <!--</ul>-->
+                <table class="table table-striped" style="font-size: 16px;line-height: 50px;">
+                    <caption><h3>IP列表</h3></caption>
+                    <thead>
+                    <tr>
+                        <th class="text-center">IP地址</th>
+                        <th class="text-center">设备名称</th>
+                        <th class="text-center">机架号</th>
+                        <th class="text-center">上级IP</th>
+                        <th class="text-center">上级端口号</th>
+                        <th class="text-center">负责人</th>
+                        <th class="text-center">设备状态</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for info in equitinfo %}
+                        <!--url指代url() 在应用的的urls模块中寻找指定名字的条目，如果想要修改页面路径可以直接在urls.py中修改 见urls.py-->
+                        <tr>
+                            <td><a href="{% url 'equit:equitinfo' info.id %}">{{ info.ip_addr }}</a></td>
+                            <td class="text-center">{{ info.equit_name }}</td>
+                            <td class="text-center"><a href="{% url 'equit:index' %}?keywords={{ info.cab_id }}">{{ info.cab_id }}</a></td>
+                            {% if info.sw_ip_addr %}
+                                <td class="text-center"><a href="{% url 'equit:index' %}?keywords={{ info.sw_ip_addr }}">{{ info.sw_ip_addr }}</a></td>
+                            {% else %}
+                                <td class="text-center">无</td>
+                            {% endif %}
+                            {% if info.sw_port %}
+                                <td class="text-center">{{ info.sw_port }}</td>
+                            {% else %}
+                                <td class="text-center">无</td>
+                            {% endif %}
+                            <td class="text-center"><a href="{% url 'equit:index' %}?keywords={{ info.staff_name }}">{{ info.staff_name }}</a></td>
+                            {% if info.status %}
+                                <td class="text-center" style="color: green">在用</td>
+                            {% else %}
+                                <td class="text-center" style="color: red">停用</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            {% else %}
+                <p>No equit are available.</p>
+            {% endif %}
+        </div>
+        <div class="pagination">
+                        <span class="step-links">
+                            {% if equitinfo.has_previous %}
+                                <a href="?page=1">&laquo; 首页</a>
+                                <a href="?page={{ equitinfo.previous_page_number }}">上一页</a>
+                            {% endif %}
+                            <span class="current">
+                                页数 {{ equitinfo.number }} / {{ equitinfo.paginator.num_pages }}
+                            </span>
+                            {% if equitinfo.has_next %}
+                                <a href="?page={{ equitinfo.next_page_number }}">下一页</a>
+                                <a href="?page={{ equitinfo.paginator.num_pages }}">末页 &raquo;</a>
+                            {% endif %}
+                        </span>
+                    </div>
+        <hr/>
+        <div>
+            <button type="button" id="btncreate" class="btn btn-primary" data-toggle="modal" data-target="#myModalAdd" style="margin-left: 20px;">添加数据</button>
+            <button type="button" id="btnupload" class="btn btn-success" data-toggle="modal" data-target="#myModalAddMore" style="margin-left: 20px;">批量导入</button>
+            <a class="btn btn-danger" style="margin-left: 20px;" style="color: white" href="{% url 'equit:excelexport' %}">数据导出</a>
+        </div>
+        <!--{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}-->
+        <!-- ModalAdd -->
+        <div class="modal fade" id="myModalAdd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="createclose" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel1">添加数据</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formstyle" method="post" action="{% url 'equit:index' %}">{% csrf_token %}
+                            <div class="form-group">
+                                <p style="color: red" id ="createError"></p>
+                            </div>
+
+                            {{form.as_p}}
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary" name="create">保存</button>
+                                <button type="button" id="btncreate_return" class="btn btn-default" data-dismiss="modal">返回</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ModalAddMore -->
+        <div class="modal fade" id="myModalAddMore" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button id="uploadclose" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel2">批量导入</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'equit:index' %}" >{% csrf_token %}
+                            <div class="form-group">
+                                <p style="color: red" id ="excelError"></p>
+                            </div>
+                            <div class="form-group">
+                                <label for="FileInput">选择信息文件</label>
+                                <input type="file" id="FileInput" name="excel_file">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary" name="upload">批量导入</button>
+                                <button type="button" id="btnupload_return" class="btn btn-default" data-dismiss="modal">返回</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $('#myModal').on('shown.bs.modal', function () {
+                $('#myInput').focus()
+            });
+
+            $().ready(
+                function ReturnError(){
+                    $('#formstyle p').addClass('form-group');
+                    $('#formstyle input').addClass('form-control');
+                    {% if excelError %}
+                        $("button#btnupload").click();
+                        $("p#excelError").text({{ excelError|safe }});
+                    {% elif createError %}
+                        $("button#btncreate").click();
+                        $("p#createError").text({{ createError|safe }});
+                    {% endif %}
+                }
+            );
+
+            $("button#uploadclose ,button#btnupload_return").click(function () {
+                $("p#excelError").text("");
+            });
+            $("button#createclose, button#btncreate_return").click(function () {
+                $("p#createError").text("");
+                $('form input').val("");
+            });
+
+
+        </script>
+
+    </div>
+
+{% endblock context%}
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--<meta charset="UTF-8">-->
+<!--<title>equit</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--Equit Info-->
+
+<!--<a href="{% url 'equit:equitstaff' equitstaff.id %}">{{ equitstaff.staff_name }}</a>-->
+<!--<a href="{% url 'equit:logout' %}">登出</a>-->
+
+<!--{% if equitstaff.info_set.all %}-->
+    <!--<ul>-->
+    <!--{% for info in equitstaff.info_set.all %}-->
+        <!--&lt;!&ndash;url指代url() 在应用的的urls模块中寻找指定名字的条目，如果想要修改页面路径可以直接在urls.py中修改 见urls.py&ndash;&gt;-->
+        <!--<li><a href="{% url 'equit:equitinfo' info.id %}">{{ info.ip_addr }}</a></li>-->
+        <!--{% endfor %}-->
+    <!--</ul>-->
+    <!--{#    <p><a href="{% url 'equit:equitinfocreate' equitstaff.id %}">添加</a></p>#}-->
+    <!--{% else %}-->
+    <!--<p>No equit are available.</p>-->
+    <!--{% endif %}-->
+
+<!--<a href="{% url 'equit:equitinfocreate' equitstaff.id %}">添加</a>-->
+<!--<a href="{% url 'equit:excelupload' equitstaff.id %}">批量导入</a>-->
+<!--<a href="{% url 'equit:excelexport' equitstaff.id %}">导出</a>-->
+<!--{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}-->
+
+<!--</body>-->
+<!--</html>-->

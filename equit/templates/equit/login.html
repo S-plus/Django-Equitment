@@ -1,0 +1,117 @@
+<!--
+# @Time     : 2018-08-01 16:44
+# @Author   : liujiuhao
+# @Site     : 
+# @File     : login.html
+# @Software : PyCharm
+-->
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--<meta charset="UTF-8">-->
+<!--<title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<form action="{% url 'equit:login' %}" method="post">-->
+<!--&lt;!&ndash; 所有针对内部url的post表单都应该使用csrf_token&ndash;&gt;-->
+<!--{% csrf_token %}-->
+<!--<p>用户名：-->
+<!--<input type="text" name="username">-->
+<!--</p>-->
+<!--<p>-->
+<!--密码：-->
+<!--<input type="password" name="password">-->
+<!--</p>-->
+<!--<p>-->
+<!--<input type="submit" value="登录">-->
+<!--</p>-->
+<!--</form>-->
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <title>Login - Equit Info</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'equit/bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'equit/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'equit/login.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'equit/responsive.css' %}">
+    <script type="text/javascript" src="{% static 'equit/jquery-1.10.2.js' %}"></script>
+    <script type="text/javascript" src="{% static 'equit/bootstrap.js' %}"></script>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="{% static 'equit/respond.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'equit/html5shiv.min.js' %}"></script>
+    <![endif]-->
+    <style type=text/css>body {font-family: 'Microsoft YaHei' !important;}
+    </style>
+</head>
+<body class=" login" data-admin-utc-offset="0">
+<div id="container">
+    <div id="header">
+        <div id="branding">
+            <h1 id="site-name">Equit Info Login</h1>
+        </div>
+    </div>
+    <div id="content" class="colM">
+        <div id="content-main">
+            <form id="formstyle" action="{% url 'equit:login' %}" method="post">{% csrf_token %}
+                {{login_form.as_p}}
+                <div class="form-group">
+                    <p style="color: red" id ="loginError">&nbsp;</p>
+                </div>
+                <div class="submit-row">
+                    <input id = 'login' type="submit" value="登录" >
+                </div>
+
+            </form>
+            <script>
+                $(function () {
+                    $().ready(function ReturnError(){
+                        $("#formstyle p").addClass('form-group');
+                        $("#formstyle input").addClass('form-control');
+                        {% if loginError %}
+                            $("p#loginError").text({{ loginError|safe }});
+                        {% endif %}
+                    });
+                    $("#id_captcha_1").blur(function () {
+                        // #id_captcha_1为输入框id，失去焦点时触发函数
+                        json_data = {
+                            'response': $('#id_captcha_1').val(), // 获取输入框和隐藏字段id_captcha_0的数值
+                            'hashkey': $('#id_captcha_0').val()
+                        }
+
+                        $.getJSON('/equit/ajax_captcha', json_data, function (data) {
+                            $('#captcha_status').remove()
+                            if(data['status']){
+                               // $('#id_captcha_1').after('<br/><span id="captcha_status" style="color:green">*验证码正确</span>')
+                                $("p#loginError").text("验证码正确");
+                                $("p#loginError").attr("style", "color:green");
+                            }else{
+                                //$('#id_captcha_1').after('<br/><span id="captcha_status" style="color:red">*验证码错误</span>')
+                                $("p#loginError").text("验证码错误");
+                            }
+                        });
+                    });
+
+                    $("img.captcha").click(function () {  // 刷新验证码图片ajax
+                        $.getJSON("/captcha/refresh", function (data) {
+                            $("img.captcha").attr("src", data.image_url);
+                            $("#id_captcha_0").attr("value", data.key);
+                        });
+                    });
+                });
+            </script>
+
+        </div>
+        <br class="clear">
+    </div>
+
+</div>
+</body>
+</html>

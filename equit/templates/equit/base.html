@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'equit/bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'equit/iconfont.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'equit/form_style.css' %}">
+    <script type="text/javascript" src="{% static 'equit/jquery-1.10.2.js' %}"></script>
+    <script type="text/javascript" src="{% static 'equit/bootstrap.js' %}"></script>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="{% static 'equit/respond.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'equit/html5shiv.min.js' %}"></script>
+    <![endif]-->
+    <style type=text/css>body {font-family: 'Microsoft YaHei' !important;}
+    </style>
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class = "navbar-brand" href="{% url 'equit:index' %}">Equit Info</a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+
+            <ul class="nav navbar-nav navbar-right">
+                <li style="margin-right: 30px;margin-top: 12px;">
+                    <form role="search" method="get" id="searchform" action="{% url 'equit:index' %}">
+                        {% csrf_token %}
+                        <div style="display: inline-block;position: relative;">
+                            <div style="position: absolute;right: 55px;top: 2px;cursor: pointer;display: none;" class="icon-input_clear"><i class="iconfont">&#xe64f;</i> </div>
+                            <input type="search" name="keywords" placeholder="输入IP地址" value="{{ keywords }}">
+                            <button type="submit"><span>搜索</span></button>
+                        </div>
+                    </form>
+                </li>
+                <!-- <li><a href="#">关于</a></li>
+                <li><a href="#">帮助</a></li> -->
+                <li><a href="{% url 'equit:equitstaff' user.equitstaff.id %}">{{ user.equitstaff.staff_name }}</a></li>
+                <li><a href="{% url 'equit:logout' %}">注销</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $("input").focus(function () {
+        $(this).parent().children(".icon-input_clear").show();
+    });
+    $("input").blur(function () {
+        if($(this).val()==''){
+            $(this).parent().children(".icon-input_clear").hide();
+        }
+    });
+    $(".icon-input_clear").click(function () {
+        $(this).parent().find('input').val('');
+        $(this).hide();
+    });
+</script>
+<div class="container body-content">
+    {% block context %}
+
+    {% endblock context %}
+    <hr/>
+    <footer>
+        <p>&copy; Equip Info</p>
+    </footer>
+</div>
+</body>
+</html>

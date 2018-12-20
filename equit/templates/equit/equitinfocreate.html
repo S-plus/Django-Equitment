@@ -1,0 +1,21 @@
+<!--
+# @Time     : 2018-09-11 16:53
+# @Author   : liujiuhao
+# @Site     : 
+# @File     : equitinfocreate.html
+# @Software : PyCharm
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form method="post">{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="添加" />
+        <a href="{% url 'equit:index' equit_staff_id %}">返回</a>
+    </form>
+</body>
+</html>
