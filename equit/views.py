@@ -52,7 +52,7 @@ def ajax_captcha(request):
 
 
 # 登录 v0.2
-def loginView(request):
+def login_view(request):
     if request.method == 'POST':
         login_form = LoginForm(request.POST)
         if login_form.is_valid():
