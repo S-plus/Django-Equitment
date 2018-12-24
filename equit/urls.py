@@ -26,7 +26,7 @@ from . import views
 
 app_name = 'equit'
 urlpatterns = [
-    path('', views.loginView, name='login'),
+    path('', views.login_view, name='login'),
     path('logout_view/', views.logout_view, name='logout'),
     path('index/', views.index_view, name='index'),  # 首页v0.1
     # path('<int:pk>/', views.IndexView.as_view(), name='index'),  # 首页v0.2
